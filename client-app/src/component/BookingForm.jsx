@@ -142,6 +142,9 @@ function BookingForm() {
                       <option value="">Select Service</option>
                       <option value="Tattoo Removal">Tattoo Removal</option>
                       <option value="Botox">Botox</option>
+                      <option value="Botox">Skin Care</option>
+                      <option value="Botox">Face Treatment</option>
+                      <option value="Botox">Chemical Peel</option>
                       {/* Add more services here */}
                     </select>
                   </div>
