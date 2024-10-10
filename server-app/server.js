@@ -5,15 +5,15 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Database connection
+// Database connection using environment variables
 const pool = new Pool({
-    user: 'postgres',
-    password: 'postgresql17',
-    host: 'localhost',
-    port: 5432,
-    database: 'postgres'
-  });
-  
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_NAME
+});
+
 app.use(cors());
 app.use(express.json());
 
@@ -42,7 +42,7 @@ app.get('/api/get_booking', async (req, res) => {
       console.error('Error fetching bookings:', err);
       res.status(500).json({ error: 'An error occurred while fetching bookings' });
     }
-  });
+});
 
 // Add more endpoints as needed
 
