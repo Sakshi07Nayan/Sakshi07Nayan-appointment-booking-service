@@ -14,7 +14,8 @@ const pool = new Pool({
     database: process.env.DB_NAME
 });
 
-app.use(cors());
+const cors = require('cors');
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 // Endpoint to book an appointment
