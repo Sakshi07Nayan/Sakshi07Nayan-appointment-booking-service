@@ -15,7 +15,7 @@ const pool = new Pool({
     database: process.env.DB_NAME
 });
 
-const cors = require('cors');
+// const cors = require('cors');
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
