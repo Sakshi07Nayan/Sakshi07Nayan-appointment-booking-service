@@ -33,9 +33,9 @@ function BookingForm() {
     setErrorMessage(''); // Clear any previous errors
     setSuccessMessage(''); // Clear any previous success message
     setIsSubmitting(true); // Disable form while submitting
-    
+  
     const { name, email, appointmentDate, service } = formData;
-
+  
     try {
       const response = await fetch(`${API_BASE_URL}/api/appointments`, {
         method: 'POST',
@@ -49,19 +49,31 @@ function BookingForm() {
           service,
         }),
       });
-
+  
       if (response.ok) {
-        const data = await response.json();
-        setSuccessMessage(`Appointment booked successfully for ${data.name} on ${data.date}!`);
+        // Check if the response has content before parsing
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const data = isJson ? await response.json() : null;
+  
+        if (data) {
+          setSuccessMessage(`Appointment booked successfully for ${data.name} on ${data.date}!`);
+        } else {
+          setSuccessMessage('Appointment booked successfully!'); // In case no data is returned
+        }
+  
+        // Reset the form
         setFormData({
           name: '',
           email: '',
           appointmentDate: '',
           service: ''
-        }); // Reset the form
+        });
       } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.error || 'Failed to book appointment. Please try again.');
+        // Handle error response (even if it's not JSON)
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const errorData = isJson ? await response.json() : null;
+        
+        setErrorMessage(errorData?.error || 'Failed to book appointment. Please try again.');
       }
     } catch (err) {
       console.error('Error:', err);
@@ -70,7 +82,7 @@ function BookingForm() {
       setIsSubmitting(false); // Re-enable form after submission is complete
     }
   };
-
+  
   return (
     <div>
       {/* Sticky Button */}
