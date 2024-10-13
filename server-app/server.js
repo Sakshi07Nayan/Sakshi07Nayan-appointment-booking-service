@@ -86,10 +86,16 @@ const port = process.env.PORT || 5000;
 //     database: process.env.DB_NAME
 // });
 
+//local database
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false, // SSL setting for production (like Heroku)
+// });
+
+//hosted database
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false, // SSL setting for production (like Heroku)
-});
+  connectionString: process.env.POSTGRES_URL,
+})
 
 // Test PostgreSQL connection
 pool.connect((err, client, release) => {
