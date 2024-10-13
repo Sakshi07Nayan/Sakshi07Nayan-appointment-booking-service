@@ -105,19 +105,20 @@ app.post('/api/appointments', async (req, res) => {
   try {
     const { name, email, date, service } = req.body;
     console.log('Received data:', { name, email, date, service });
-
-    // Convert date from dd-mm-yyyy to yyyy-mm-dd
-    // const [day, month, year] = date.split('-');
-    // const formattedDate = `${year}-${month}-${day}`; // Convert to yyyy-mm-dd format
+    if (!name || !email || !date || !service) {
+      return res.status(400).json({ error: 'All fields are required.' });
+    }
 
     const query = 'INSERT INTO appointments (name, email, date, service) VALUES ($1, $2, $3, $4) RETURNING *';
     const values = [name, email, date, service];
 
     const result = await pool.query(query, values);
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    console.log('Database result:', result);
+    res.status(201).json({ name, date, message: "Appointment booked successfully!" });
+  } catch (error) {
+    // Log detailed error message to help with debugging
+    console.error('API error:', error);
+    res.status(500).json({ error: 'Internal server error. Please try again later.' });
   }
 });
 
