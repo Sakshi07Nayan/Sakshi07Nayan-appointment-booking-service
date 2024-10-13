@@ -25,25 +25,19 @@ pool.connect((err, client, release) => {
     console.error('Error acquiring client', err.stack);
     return;
   }
-  client.query('SELECT NOW()', (err, result) => {
-    release();
-    if (err) {
-      console.error('Error executing query', err.stack);
-      return;
-    }
-    console.log('Connection test result:', result.rows);
-  });
+  console.log('Database connected');
 });
 
 
 
+app.use(express.json());
 // app.use(cors({ origin: '*' }));
 app.use(cors({
   origin: 'https://appointment-booking-service-ogzq.vercel.app', // Replace with your React app domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  methods: ['GET', 'POST'], // Allowed methods
   credentials: true, 
 }));
-app.use(express.json());
+
 
 // Endpoint to book an appointment
 app.post('/api/appointments', async (req, res) => {
@@ -61,9 +55,12 @@ app.post('/api/appointments', async (req, res) => {
     console.log('Database result:', result);
     res.status(201).json({ name, date, message: "Appointment booked successfully!" });
   } catch (error) {
-    // Log detailed error message to help with debugging
     console.error('API error:', error);
-    res.status(500).json({ error: 'Internal server error. Please try again later.' });
+    if (error.code === '23505') { // Duplicate key violation
+      res.status(409).json({ error: 'Appointment already exists.' });
+    } else {
+      res.status(500).json({ error: 'Internal server error. Please try again later.' });
+    }
   }
 });
 
