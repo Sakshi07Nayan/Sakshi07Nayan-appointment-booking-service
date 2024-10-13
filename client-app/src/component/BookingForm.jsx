@@ -51,15 +51,14 @@ function BookingForm() {
       });
   
       if (response.ok) {
-        // Check if the response has content before parsing
         const isJson = response.headers.get('content-type')?.includes('application/json');
         const data = isJson ? await response.json() : null;
   
-        if (data) {
-          setSuccessMessage(`Appointment booked successfully for ${data.name} on ${data.date}!`);
-        } else {
-          setSuccessMessage('Appointment booked successfully!'); // In case no data is returned
-        }
+        setSuccessMessage(
+          data
+            ? `Appointment booked successfully for ${data.name} on ${data.date}!`
+            : 'Appointment booked successfully!'
+        );
   
         // Reset the form
         setFormData({
@@ -69,19 +68,19 @@ function BookingForm() {
           service: ''
         });
       } else {
-        // Handle error response (even if it's not JSON)
         const isJson = response.headers.get('content-type')?.includes('application/json');
         const errorData = isJson ? await response.json() : null;
-        
+  
         setErrorMessage(errorData?.error || 'Failed to book appointment. Please try again.');
       }
     } catch (err) {
       console.error('Error:', err);
       setErrorMessage('Server error. Please try again later.');
     } finally {
-      setIsSubmitting(false); // Re-enable form after submission is complete
+      setIsSubmitting(false);
     }
   };
+  
   
   return (
     <div>
